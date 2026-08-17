@@ -42,21 +42,22 @@ const getSource = (value) => {
 const collected = [];
 
 for (const keyword of keywords) {
-  const endpoint = new URL("https://openapi.naver.com/v1/search/news.json");
+  const endpoint = new URL("https://naverapihub.apigw.ntruss.com/search/v1/news");
   endpoint.searchParams.set("query", keyword);
   endpoint.searchParams.set("display", "10");
   endpoint.searchParams.set("sort", "date");
+  endpoint.searchParams.set("format", "json");
 
   const response = await fetch(endpoint, {
     headers: {
-      "X-Naver-Client-Id": clientId,
-      "X-Naver-Client-Secret": clientSecret,
+      "X-NCP-APIGW-API-KEY-ID": clientId,
+      "X-NCP-APIGW-API-KEY": clientSecret,
     },
   });
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(`Naver API failed for ${keyword}: ${response.status} ${body}`);
+    throw new Error(`NAVER API HUB failed for ${keyword}: ${response.status} ${body}`);
   }
 
   const data = await response.json();
