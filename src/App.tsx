@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Github, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import "./styles.css";
 
 type Page = "profile" | "process-data";
@@ -175,7 +175,7 @@ function ProfilePage() {
             target="_blank"
             rel="noreferrer"
           >
-            <Github size={15} /> github.com/keemjunyoung
+            github.com/keemjunyoung
           </a>
         </div>
       </div>
