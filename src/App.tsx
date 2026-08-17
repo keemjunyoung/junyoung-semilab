@@ -1,24 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import "./styles.css";
 
-type Page = "profile" | "process-data" | "problem-lab" | "news-tech";
-
-type NewsItem = {
-  id: string;
-  title: string;
-  description: string;
-  link: string;
-  originalLink?: string;
-  pubDate: string;
-  keyword: string;
-  source?: string;
-};
-
-type NewsFeed = {
-  generatedAt: string | null;
-  items: NewsItem[];
-};
+type Page = "profile" | "process-data" | "problem-lab";
 
 const education = [
   { title: "사우고등학교", meta: "졸업", detail: "Sau High School" },
@@ -148,17 +132,6 @@ const problemFormat = [
   ["04", "EDA & AI", "데이터셋을 직접 탐색하고 AI/통계 분석으로 가설을 검증"],
   ["05", "Engineering Action", "실제 설비 엔지니어라면 무엇을 확인·수정·예방할지 결정"],
   ["06", "Reflection", "AI 결과와 내 판단의 차이, 놓친 변수, 다음 문제에서 개선할 점 기록"],
-];
-
-const newsTopics = [
-  "반도체 공정",
-  "반도체 장비",
-  "HBM",
-  "EUV",
-  "식각",
-  "증착",
-  "첨단 패키징",
-  "반도체 AI",
 ];
 
 function ResumeSection({
@@ -300,71 +273,6 @@ function ProblemLabPage() {
   );
 }
 
-function formatNewsDate(value: string) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
-}
-
-function NewsTechPage() {
-  const [feed, setFeed] = useState<NewsFeed>({ generatedAt: null, items: [] });
-
-  useEffect(() => {
-    fetch("/data/news.json")
-      .then((response) => (response.ok ? response.json() : Promise.reject(new Error("news feed unavailable"))))
-      .then((data: NewsFeed) => setFeed(data))
-      .catch(() => setFeed({ generatedAt: null, items: [] }));
-  }, []);
-
-  return (
-    <section className="page news-page">
-      <header className="page-heading">
-        <p className="section-label">NEWS & TECHNOLOGY</p>
-        <h1>Semiconductor News & Tech</h1>
-        <p>
-          반도체 공정·장비·패키징·AI 관련 뉴스를 자동으로 모으고, 단순 기사 스크랩이 아니라 기술 변화가 공정과 설비에 어떤 의미인지 정리하는 공간입니다.
-        </p>
-      </header>
-
-      <div className="topic-line">
-        {newsTopics.map((topic) => <span key={topic}>{topic}</span>)}
-      </div>
-
-      <section className="lab-section">
-        <div className="lab-heading"><span>NEWS</span><h2>Collected Articles</h2></div>
-        {feed.items.length > 0 ? (
-          <div className="news-list">
-            {feed.items.map((item) => (
-              <article className="news-row" key={item.id}>
-                <div className="news-meta"><span>{item.keyword}</span><span>{formatNewsDate(item.pubDate)}</span></div>
-                <div className="news-main">
-                  <a href={item.originalLink || item.link} target="_blank" rel="noreferrer">{item.title}</a>
-                  <p>{item.description}</p>
-                  {item.source && <small>{item.source}</small>}
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="news-empty">
-            <strong>자동 수집 연결 준비 중</strong>
-            <p>Naver Search API 키를 연결하면 수집 스크립트가 뉴스를 가져와 이곳에 자동으로 표시합니다.</p>
-          </div>
-        )}
-      </section>
-
-      <section className="lab-section">
-        <div className="lab-heading"><span>NOTE</span><h2>Technology Notes</h2></div>
-        <div className="tech-note-row">
-          <strong>기사 수집 → 기술 핵심 → 공정/설비 영향 → My Take</strong>
-          <p>앞으로 중요한 뉴스는 원문 링크와 함께 핵심 기술, 왜 중요한지, 내가 생각한 공정·설비 영향까지 별도로 정리합니다.</p>
-        </div>
-      </section>
-    </section>
-  );
-}
-
 export default function App() {
   const [page, setPage] = useState<Page>("profile");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -379,14 +287,12 @@ export default function App() {
     { key: "profile", label: "Profile" },
     { key: "process-data", label: "Process Data" },
     { key: "problem-lab", label: "Problem Lab" },
-    { key: "news-tech", label: "News & Tech" },
   ];
 
   const renderPage = () => {
     if (page === "profile") return <ProfilePage />;
     if (page === "process-data") return <ProcessDataPage />;
-    if (page === "problem-lab") return <ProblemLabPage />;
-    return <NewsTechPage />;
+    return <ProblemLabPage />;
   };
 
   return (
